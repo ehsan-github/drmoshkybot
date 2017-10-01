@@ -12,30 +12,69 @@ def call_handler(bot, update):
     splited_query = query.data.split("_")
     type = splited_query[0]
     index = int(splited_query[1])
-    service = constants.SERVICES[index]
+    if len(splited_query) > 2:
+        service = constants.SERVICES[index]["children"][int(splited_query[2])]
+    else:
+        service = constants.SERVICES[index]
     service_name = service["name"]
     service_description = service["description"]
     service_cost = service["cost"]
 
     if type == "service" :
+        if "children" in service:
+            service_children = service["children"]
+            text = 'از خدمات زیر انتخاب کنید'
+            buttons = [InlineKeyboardButton(text=x["name"], callback_data="service_"+str(index)+"_"+str(idx)) for idx, x in enumerate(service_children)]
+            keyboard = InlineKeyboardMarkup([buttons])
+            bot.editMessageText(chat_id = user_id, message_id = msg_id, text = text, reply_markup = keyboard)
+
+        elif len(splited_query) > 2:
+            childIndex = int(splited_query[2])
             buttons = [
-                (InlineKeyboardButton(text='cost', callback_data="cost_"+str(index))),
+                (InlineKeyboardButton(text='هزینه', callback_data="cost_"+str(index)+"_"+str(childIndex))),
             ]
             keyboard = InlineKeyboardMarkup([buttons,
-                                             [(InlineKeyboardButton(text='liste khadamat', callback_data="menu_1"))],
+                                             [(InlineKeyboardButton(text=':back:', callback_data="menu_1"))],
+            ])
+            bot.editMessageText(chat_id = user_id, message_id = msg_id, text = service["name"] +'\n'+service["description"], reply_markup = keyboard)
+        else:
+            buttons = [
+                (InlineKeyboardButton(text='هزینه', callback_data="cost_"+str(index))),
+            ]
+            keyboard = InlineKeyboardMarkup([buttons,
+                                             [(InlineKeyboardButton(text=':back:', callback_data="menu_1"))],
             ])
             bot.editMessageText(chat_id = user_id, message_id = msg_id, text = service_name +'\n'+service_description, reply_markup = keyboard)
 
+
     elif type == "cost" :
-            buttons = [(InlineKeyboardButton(text='tozihat', callback_data="service_"+str(index)))]
+        if len(splited_query) > 2:
+            childIndex = int(splited_query[2])
+            buttons = [
+                (InlineKeyboardButton(text='توضیحات', callback_data="service_"+str(index)+"_"+str(childIndex))),
+            ]
             keyboard = InlineKeyboardMarkup([buttons,
-                                             [(InlineKeyboardButton(text='liste khadamat', callback_data="menu_1"))]])
+                                             [(InlineKeyboardButton(text=':back:', callback_data="menu_1"))],
+            ])
+            bot.editMessageText(chat_id = user_id, message_id = msg_id, text = service["name"] +'\n'+service["cost"], reply_markup = keyboard)
+        else:
+            buttons = [(InlineKeyboardButton(text='توضیحات', callback_data="service_"+str(index)))]
+            keyboard = InlineKeyboardMarkup([buttons,
+                                             [(InlineKeyboardButton(text=':back:', callback_data="menu_1"))]])
             bot.editMessageText(chat_id = user_id, message_id = msg_id, text = service_name +'\n'+service_cost, reply_markup = keyboard)
 
     elif type == "menu" :
         text = 'از خدمات زیر انتخاب کنید'
         buttons = [InlineKeyboardButton(text=x["name"], callback_data="service_"+str(index)) for index, x in enumerate(constants.SERVICES)]
-        keyboard = InlineKeyboardMarkup([buttons])
+        keyboard = InlineKeyboardMarkup([buttons[0:4],buttons[4:8]])
+        bot.editMessageText(chat_id = user_id, message_id = msg_id, text = text, reply_markup = keyboard)
+
+    elif type == "children" :
+        childIndex = int(splited_query[2])
+        text = 'از خدمات زیر انتخاب کنید'
+        services = constants.SERVICES[index]["children"]
+        buttons = [InlineKeyboardButton(text=x["name"], callback_data="service_"+str(index)+"_"+str(idx)) for idx, x in enumerate(services)]
+        keyboard = InlineKeyboardMarkup([buttons[0:4], buttons[4:8]])
         bot.editMessageText(chat_id = user_id, message_id = msg_id, text = text, reply_markup = keyboard)
 
     bot.answerCallbackQuery(query.id, text='loaded'+ service_name)
