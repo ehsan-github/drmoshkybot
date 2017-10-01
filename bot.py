@@ -19,6 +19,7 @@ def start(bot, update):
     from_user = update.message.chat
     bot.sendMessage(update.message.chat_id,\
                     text ="سلام {} به ربات کلینیک تخصصی پوست و زیبایی دکتر مشکی خوش‌آمدید\n.".format(from_user.first_name), reply_markup = constants.KEYBOARD_MAIN)
+    services.select_service(bot, update.message.chat_id)
     return constants.STATE_MAIN
 
 def stop_this_fucking_bot(bot, update):
