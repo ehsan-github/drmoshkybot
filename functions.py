@@ -66,7 +66,7 @@ def call_handler(bot, update):
     elif type == "menu" :
         text = 'از خدمات زیر انتخاب کنید'
         buttons = [InlineKeyboardButton(text=x["name"], callback_data="service_"+str(index)) for index, x in enumerate(constants.SERVICES)]
-        keyboard = InlineKeyboardMarkup([buttons[0:4],buttons[4:8]])
+        keyboard = InlineKeyboardMarkup([buttons[0:2],buttons[2:4],buttons[4:6], buttons[6:8]])
         bot.editMessageText(chat_id = user_id, message_id = msg_id, text = text, reply_markup = keyboard)
 
     elif type == "children" :
