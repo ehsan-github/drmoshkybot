@@ -29,7 +29,7 @@ def main_menue_handler(bot, update):
     message = update.message.text
     if (message == 'آدرس مطب'):
         bot.sendMessage(update.message.chat_id,
-                        text = 'آدرس مطب : کرج مهرشهر بلوارشهرداری فاز دو بین خیابان 206 و 208 جنب بانک ملی بالای شیرینی بیسکوتی . طبقه دوم . واحد چهارم .\n026-33419204\n Instagram : dr_moshky', reply_markup=constants.KEYBOARD_MAIN)
+                        text = 'آدرس مطب : کرج مهرشهر بلوارشهرداری فاز دو بین خیابان 206 و 208 جنب بانک ملی بالای شیرینی بیسکوتی . طبقه دوم . واحد چهارم .\n026-33419204\n Instagram : http://instagram.com/dr_moshky', reply_markup=constants.KEYBOARD_MAIN)
 
         return constants.STATE_MAIN
     elif (message == 'لیست خدمات'):
